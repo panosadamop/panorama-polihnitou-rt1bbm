@@ -11,8 +11,26 @@ import {
 } from '@ionic/react';
 
 import { useLocation } from 'react-router-dom';
-import { archiveOutline, archiveSharp, bookmarkOutline, heartOutline, heartSharp, mailOutline, mailSharp, paperPlaneOutline, paperPlaneSharp, trashOutline, trashSharp, warningOutline, warningSharp } from 'ionicons/icons';
+import {
+  accessibilityOutline,
+  archiveOutline,
+  archiveSharp,
+  arrowForwardCircleOutline,
+  bookmarkOutline, chatboxOutline, documentOutline,
+  heartOutline,
+  heartSharp, homeOutline, informationOutline,
+  mailOutline,
+  mailSharp,
+  paperPlaneOutline,
+  paperPlaneSharp, personOutline, searchOutline,
+  trashOutline,
+  trashSharp,
+  warningOutline,
+  warningSharp
+} from 'ionicons/icons';
 import './Menu.css';
+import React, {useEffect, useState} from "react";
+import {getCategories} from "../services/wordpressApi";
 
 interface AppPage {
   url: string;
@@ -23,47 +41,33 @@ interface AppPage {
 
 const appPages: AppPage[] = [
   {
-    title: 'Inbox',
-    url: '/folder/Inbox',
+    title: 'Αρχική',
+    url: '/',
     iosIcon: mailOutline,
-    mdIcon: mailSharp
+    mdIcon: homeOutline
   },
   {
-    title: 'Outbox',
-    url: '/folder/Outbox',
+    title: 'Ποιοι είμαστε',
+    url: '/about',
     iosIcon: paperPlaneOutline,
-    mdIcon: paperPlaneSharp
+    mdIcon: accessibilityOutline
   },
   {
-    title: 'Favorites',
-    url: '/folder/Favorites',
+    title: 'Επικοινωνία',
+    url: '/contact',
     iosIcon: heartOutline,
-    mdIcon: heartSharp
-  },
-  {
-    title: 'Archived',
-    url: '/folder/Archived',
-    iosIcon: archiveOutline,
-    mdIcon: archiveSharp
-  },
-  {
-    title: 'Trash',
-    url: '/folder/Trash',
-    iosIcon: trashOutline,
-    mdIcon: trashSharp
-  },
-  {
-    title: 'Spam',
-    url: '/folder/Spam',
-    iosIcon: warningOutline,
-    mdIcon: warningSharp
+    mdIcon: chatboxOutline
   }
 ];
 
-const labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
-
 const Menu: React.FC = () => {
   const location = useLocation();
+
+  const [categories, setCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    getCategories().then(response => setCategories(response.data));
+  }, []);
 
   return (
     <IonMenu contentId="main" type="overlay">
@@ -84,14 +88,15 @@ const Menu: React.FC = () => {
         </IonList>
 
         <IonList id="labels-list">
-          <IonListHeader>Labels</IonListHeader>
-          {labels.map((label, index) => (
-            <IonItem lines="none" key={index}>
-              <IonIcon aria-hidden="true" slot="start" icon={bookmarkOutline} />
-              <IonLabel>{label}</IonLabel>
-            </IonItem>
+          <IonListHeader>Θεματολογία</IonListHeader>
+          {categories.map((category) => (
+              <IonItem key={category.id} className={location.pathname === category.url ? 'selected' : ''} routerLink={`/category/${category.id}`} routerDirection="none" lines="none" detail={false}>
+               <IonIcon aria-hidden="true" slot="start" ios={arrowForwardCircleOutline} md={arrowForwardCircleOutline} />
+                <IonLabel>{category.name}</IonLabel>
+              </IonItem>
           ))}
         </IonList>
+
       </IonContent>
     </IonMenu>
   );
