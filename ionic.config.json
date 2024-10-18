@@ -1,0 +1,8 @@
+{
+  "name": "PanoramaPolihnitou",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite",
+  "id": "f37d2b64"
+}
